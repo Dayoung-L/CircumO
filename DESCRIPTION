@@ -1,0 +1,8 @@
+Package: MyCode
+Title: My Code for this project
+Description: To tackle this problem
+Version: 0.0
+License: For my eyes only
+Author: Barry Rowlingson <bsr@example.com>
+Depends: R
+RoxygenNote: 7.1.1
