@@ -2,7 +2,7 @@
 % Please edit documentation in R/CircumOLS.R
 \name{CircumOLS}
 \alias{CircumOLS}
-\title{Explanation}
+\title{CirucmOLS}
 \usage{
 CircumOLS(
   rawdt,
@@ -14,9 +14,24 @@ CircumOLS(
   ncore = 8
 )
 }
-\value{
+\arguments{
+\item{rawdt}{requires data set.}
 
+\item{m}{indicates the number of beta coefficients}
+
+\item{mcsc}{indicates the minimum common score correlation}
+
+\item{type}{indicates the type of data}
+
+\item{simulation_based}{determines the type of ACM}
+
+\item{icorrection}{indicates the type of correction for polychoric correlation}
+
+\item{ncore}{indicates the number of cores for parallel computing.}
+}
+\value{
+ACM LLALALAL
 }
 \description{
-Explanation
+CirucmOLS
 }

@@ -288,8 +288,8 @@ CircumOLS <- function(rawdt, m=1, mcsc="unconstrained",
       dfdr}
   
   up = c(rep(Inf,(2*p + m -1)))
-  low = c(rep(0,(p-1)),rep(0,m),rep(0,p))
-  control <- list(trace=print.level, REPORT=10,maxit=1000, factr=1e5)
+  low = c(rep(-Inf,(p-1)),rep(0,m),rep(0,p))
+  control <- list(trace=print.level, REPORT=20,maxit=1000, factr=1e5)
   
   est <- optim(par, fn = objective2ols, gr = objective2gr, method="L-BFGS-B", 
                lower = low, upper = up, control = control)
@@ -918,15 +918,18 @@ CircumOLS <- function(rawdt, m=1, mcsc="unconstrained",
     
     ##se of beta1 ~
     se = sqrt(diag(solve(AA)%*%BB%*%solve(AA)))
+    se[1:(p-1)] = se[1:(p-1)]*180/pi
     
-    result = list()
-    result$F0 = F0
-    result$RMSEA = RMSEA
-    result$perfect.fit = p.perfect
-    result$close.fit = p.close
-    result$s.e = se/sqrt(N)
+    resultA = list()
+    resultA$F0 = F0
+    resultA$RMSEA = RMSEA
+    resultA$perfect.fit = p.perfect
+    resultA$close.fit = p.close
+    resultA$s.e = se/sqrt(N)
+    resultA$AA = AA
     
-    return(result)
+    class(resultA) = "my_fun" # Tagging here
+    return(resultA)
   }
   
   estim <- est$par
@@ -935,22 +938,30 @@ CircumOLS <- function(rawdt, m=1, mcsc="unconstrained",
     estim[(p-1+1):(p-1+m)] <- 1 - estim[(p-1+1):(p-1+m)]/(1+sum(estim[(p-1+1):(p-1+m)]))
   } else estim[(p-1+1):(p-1+m)] <- c(1, estim[(p-1+2):(p-1+m)])/(1+sum(estim[(p-1+1):(p-1+m)]))
   
-  names(estim) <- c(rep("ang",(p-1)),rep("beta",(m)),rep("nu",(p)))
   estim2 = estim
   op = which(estim[1:(p-1)]>2*pi)
   estim[op] = estim[op] - 2*pi
+  op2 = which(estim[1:(p-1)]<0)
+  estim[op2] = 2*pi + estim[op2] 
   estim[1:(p-1)] = estim[1:(p-1)]*180/pi
+  com = 1/(1+estim[(length(estim)-p+1) : length(estim)])
+  
+  v.se = test.stat(est$par)$s.e[(length(estim)-p+1) : length(estim)]
+  com.se = 1/2*v.se*(1+v.se^2)^(-3/2)
   
   result = list()
+  result$coefficients = data.frame(point.estimates = estim, SE = test.stat(est$par)$s.e)
+  result$communality = data.frame(communality.index = sqrt(com), SE = com.se)
   result$test.stat = test.stat(est$par)
-  result$estimates = estim #beta1
   result$radians = estim2
   result$prime.par = est$par
   
+  class(result) = "my_fun2"
   return(result)
-  
 }
 
+print.my_fun = function(x, ...) print(x[1:4])
+print.my_fun2 = function(x, ...) print(x[c(1,3)])
 
 #' Plot circumplex
 #' 
