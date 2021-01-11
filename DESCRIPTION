@@ -1,8 +1,8 @@
 Package: CircumOLS
-Title: Estimating Circumplex Models by OLS
-Description: Estimating Circumplex Models with Ordinal Data
+Title: Estimating Circumplex Models by the OLS Method
+Description: Estimating Circumplex Models with Ordinal Data and Continuous Data by the OLS Method
 Version: 0.0
-License: For my eyes only
-Author: Dayoung Lee <dlee33@nd.edu>
+License: Dayoung Lee
+Author: Dayoung Lee <dlee33@nd.edu>, Guangjian Zhang <Guangjian.Zhang.106@nd.edu>
 Depends: R
 RoxygenNote: 7.1.1
