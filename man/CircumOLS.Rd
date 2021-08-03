@@ -40,11 +40,11 @@ CirucmOLS
 Code modified from function CircE.BFGS obtained from https://cran.r-project.org/src/contrib/Archive/CircE/CircE_1.1.tar.gz
 }
 \references{
-Browne, M. W. (1992). Circumplex models for correlation matrices. Psychometrika, 57, 469\text{–}497. doi: 10.1007/BF02294416
+Browne, M. W. (1992). Circumplex models for correlation matrices. Psychometrika, 57, 469-497. doi: 10.1007/BF02294416
 
-Monroe, S. (2018). Contributions to estimation of polychoric correlations. Multivariate Behavioral Research, 53, 247\text{–}266. doi: 10.1080/00273171.2017.1419851
+Monroe, S. (2018). Contributions to estimation of polychoric correlations. Multivariate Behavioral Research, 53, 247-266. doi: 10.1080/00273171.2017.1419851
 
-Grassi, M., Luccio, R., & Di Blas, L. (2010). Circe: An r implementation of browne’s circular stochastic process model. Behavior Research Methods, 42(1), 55\text{–}73. doi:10.3758/BRM.42.1.55
+Grassi, M., Luccio, R., & Di Blas, L. (2010). Circe: An r implementation of browne’s circular stochastic process model. Behavior Research Methods, 42(1), 55-73. doi:10.3758/BRM.42.1.55
 
 Lee, D., & Zhang, G. (in preparation). Circumplex models with ordinal data.
 
