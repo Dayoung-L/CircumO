@@ -23,7 +23,7 @@
 #' @references Grassi, M., Luccio, R., & Di Blas, L. (2010). Circe: An r implementation of browne’s circular stochastic process model. Behavior Research Methods, 42(1), 55–73. doi:10.3758/BRM.42.1.55
 #' @references Lee, D., & Zhang, G. (in preparation). Circumplex models with ordinal data.
 #' @references Zhang, G., Trichtinger, L., Lee, D., & Jiang, G. (2021). Polychoricrm: A computationally efficient r function for estimating polychoric correlations and their asymptotic covariance matrix. Structural Equation Modeling: A Multidisciplinary Journal. doi:10.1080/10705511.2021.1929996
-#' @example #Examples using the data sets included in the packages: data("emotions") CircumOLS(emotions)    # Big-five inventory (N = 228)
+#' @examples #Examples using the data set included in the packages: data("emotions") CircumOLS(emotions, m = 1, type = "ordinal")    # Big-five inventory (N = 228)
 #' @importFrom EFAutilities efa
 #' @importFrom MASS mvrnorm
 #' @importFrom Turbofuns PolychoricRM
