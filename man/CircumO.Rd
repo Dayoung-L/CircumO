@@ -15,17 +15,17 @@ CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, 
 
 \item{simulation_based}{determines whether an asymptotic covariance matrix estimate is a sample-based ACM estimate or a Monte Carlo ACM estimate: \code{False} (default, sample-based ACM), \code{True} (Monte Carlo ACM)}
 
-\item{icorrection}{Methods to adjust for empty cells: a scalar where 0 is no adjustment is done (default), 1  adds 1/(nc*nr) to all cells where nc and nr is the number of columns and rows of the contingency table respectively, 2 adds 0.1 to all cells, 3 adds 0.5 to all cells, 11 adds 1/(nc*nr) to only zero cells, 12 adds 0.1 to only zero cells, and 13 adds 0.5 to only zero cells}
+\item{icorrection}{determines a method to adjust for empty cells in a contingency table when computing polychoric correlations. It is the carried-over argument from \code{Turbofuns::PolychoricRM}.}
 
-\item{ncore}{indicates the number of cores for parallel computing. It defaults to 8.}
+\item{ncore}{indicates the number of cores for parallel computing. It defaults to 2. It is the carried-over argument from \code{Turbofuns::PolychoricRM}.}
 
-\item{maxit}{The maximum number of iterations. It defaults to 1000.}
+\item{maxit}{indicates the maximum number of iterations. It defaults to 1000. It is the carried-over argument from \code{optim}.}
 
-\item{factr}{controls the convergence of the "L-BFGS-B" method. Convergence occurs when the reduction in the objective is within this factor of the machine tolerance. Default is 1e7, that is a tolerance of about 1e-8.}
+\item{factr}{controls the convergence of the "L-BFGS-B" method. Convergence occurs when the reduction in the objective is within this factor of the machine tolerance. Default is 1e7, that is a tolerance of about 1e-8. It is the carried-over argument from \code{optim}.}
 
-\item{pgtol}{helps control the convergence of the "L-BFGS-B" method. It is a tolerance on the projected gradient in the current search direction. This defaults to zero, when the check is suppressed.}
+\item{pgtol}{helps control the convergence of the "L-BFGS-B" method. It is a tolerance on the projected gradient in the current search direction. This defaults to zero, when the check is suppressed. It is the carried-over argument from \code{optim}.}
 
-\item{lmm}{is an integer giving the number of BFGS updates retained in the "L-BFGS-B" method. It defaults to number of free parameters.}
+\item{lmm}{is an integer giving the number of BFGS updates retained in the "L-BFGS-B" method. It defaults to number of free parameters. It is the carried-over argument from \code{optim}.}
 
 \item{N_star}{is the sample size of a simulated sample for Monte Carlo ACM. It defaults to 10000.}
 }
@@ -33,7 +33,7 @@ CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, 
 The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows both of continuous and ordinal variables.
 }
 \details{
-CirucmOLS
+CirucmO
 
 Code modified from function CircE.BFGS obtained from https://cran.r-project.org/src/contrib/Archive/CircE/CircE_1.1.tar.gz
 }
@@ -57,5 +57,5 @@ Dayoung Lee \email{dlee33@nd.edu}
 
 data("emotion") # data from (Trampe et al., 2015), N = 12108
 
-CircumOLS(emotion, m = 1, type = "ordinal")
+CircumO(emotion, m = 1, type = "ordinal")
 }
