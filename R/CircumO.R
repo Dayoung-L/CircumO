@@ -1,9 +1,9 @@
-#' CirucmOLS
+#' CirucmO
 #'
 #' @title Circumplex Models Ordinary Least Square Estimation
-#' @name CircumOLS
+#' @name CircumO
 #' @description The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows both continuous data and ordinal data.
-#' @usage CircumOLS(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, icorrection = 0, ncore = 8, maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000)
+#' @usage CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, icorrection = 0, ncore = 8, maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000)
 #' @param rawdt indicates the raw data which is a n by p matrix where n is the number of participants and p is the number of manifest variables.
 #' @param m indicates the number of cosine function coefficients. Defaults to 1.
 #' @param mcsc indicates minimum common score correlation value: \code{"unconstrained"} (default), \code{-1}
@@ -26,11 +26,11 @@
 #' @importFrom EFAutilities efa
 #' @importFrom MASS mvrnorm
 #' @importFrom Turbofuns PolychoricRM
-#' @export CircumOLS
-#' @method print CircumOLS
+#' @export CircumO
+#' @method print CircumO
 #' @export
 
-CircumOLS <- function(rawdt, m=1, mcsc="unconstrained",
+CircumO <- function(rawdt, m=1, mcsc="unconstrained",
                       type="ordinal", simulation_based = F, icorrection = 0, ncore = 2,
                       maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000){
 
@@ -964,9 +964,9 @@ CircumOLS <- function(rawdt, m=1, mcsc="unconstrained",
 
   if (sum(is.na(result$coef$SE)) != 0) result$SE_NA = 1
 
-  class(result) = "CircumOLS"
+  class(result) = "CircumO"
   return(result)
 }
 
 
-print.CircumOLS = function(x, ...) print(x[c(1,3)])
+print.CircumO = function(x, ...) print(x[c(1,3)])

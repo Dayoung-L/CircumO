@@ -1,8 +1,8 @@
-\name{CircumOLS}
-\alias{CircumOLS}
+\name{CircumO}
+\alias{CircumO}
 \title{Circumplex Models Ordinary Least Square Estimation}
 \usage{
-CircumOLS(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, icorrection = 0, ncore = 8, maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000)
+CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, icorrection = 0, ncore = 8, maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000)
 }
 \arguments{
 \item{rawdt}{indicates the raw data which is a n by p matrix where n is the number of participants and p is the number of manifest variables.}
@@ -53,9 +53,9 @@ Dayoung Lee \email{dlee33@nd.edu}
 }
 
 \examples{
-#Examples using the data set included in the package:
+#An example using the data set included in the package:
 
-data("emotion") # N = 12108, binary data
+data("emotion") # data from (Trampe et al., 2015), N = 12108
 
 CircumOLS(emotion, m = 1, type = "ordinal")
 }
