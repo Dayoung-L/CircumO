@@ -12,7 +12,7 @@
 #' @param icorrection determines a method to adjust for empty cells in a contingency table when computing polychoric correlations. It is the carried-over argument from \code{Turbofuns::PolychoricRM}.
 #' @param ncore indicates the number of cores for parallel computing. It defaults to 2. It is the carried-over argument from \code{Turbofuns::PolychoricRM}.
 #' @param maxit indicates the maximum number of iterations. It defaults to 1000. It is the carried-over argument from \code{optim}.
-#' @param factr controls the convergence of the "L-BFGS-B" method. Convergence occurs when the reduction in the objective is within this factor of the machine tolerance. Default is 1e7, that is a tolerance of about 1e-8. It is the carried-over argument from \code{optim}.
+#' @param factr controls the convergence of the "L-BFGS-B" method. Convergence occurs when the reduction in the objective is within this factor of the machine tolerance. It defaults to 1e9. It is the carried-over argument from \code{optim}.
 #' @param pgtol helps control the convergence of the "L-BFGS-B" method. It is a tolerance on the projected gradient in the current search direction. This defaults to zero, when the check is suppressed. It is the carried-over argument from \code{optim}.
 #' @param lmm is an integer giving the number of BFGS updates retained in the "L-BFGS-B" method. It defaults to number of free parameters. It is the carried-over argument from \code{optim}.
 #' @param N_star is the sample size of a simulated sample for Monte Carlo ACM. It defaults to 10000.
@@ -32,7 +32,7 @@
 
 CircumO <- function(rawdt, m=1, mcsc="unconstrained",
                       type="ordinal", simulation_based = F, icorrection = 0, ncore = 2,
-                      maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000){
+                      maxit = 1000, factr = 1e9, pgtol = 0, lmm = NULL, N_star = 10000){
 
   m = m
   N = nrow(rawdt)

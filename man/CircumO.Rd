@@ -21,7 +21,7 @@ CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, 
 
 \item{maxit}{indicates the maximum number of iterations. It defaults to 1000. It is the carried-over argument from \code{optim}.}
 
-\item{factr}{controls the convergence of the "L-BFGS-B" method. Convergence occurs when the reduction in the objective is within this factor of the machine tolerance. Default is 1e7, that is a tolerance of about 1e-8. It is the carried-over argument from \code{optim}.}
+\item{factr}{controls the convergence of the "L-BFGS-B" method. Convergence occurs when the reduction in the objective is within this factor of the machine tolerance. It defaults to 1e9. It is the carried-over argument from \code{optim}.}
 
 \item{pgtol}{helps control the convergence of the "L-BFGS-B" method. It is a tolerance on the projected gradient in the current search direction. This defaults to zero, when the check is suppressed. It is the carried-over argument from \code{optim}.}
 
