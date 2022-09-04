@@ -58,9 +58,9 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained",
     r=r
     if (type == "ordinal"){
       if (sum(eigen(Lpoly[[4]])$values < 0) == 0){
-        lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F, se = "none")$unrotated
-      } else {lambda = efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F, se = "none")$unrotated}
-    } else {lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F, se = "none")$unrotated}
+        lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F)$unrotated
+      } else {lambda = efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F)$unrotated}
+    } else {lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F)$unrotated}
 
 
     k=3
