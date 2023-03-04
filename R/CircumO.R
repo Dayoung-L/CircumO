@@ -21,7 +21,7 @@
 #' @references Browne, M. W. (1992). Circumplex models for correlation matrices. Psychometrika, 57, 469–497. doi: 10.1007/BF02294416
 #' @references Monroe, S. (2018). Contributions to estimation of polychoric correlations. Multivariate Behavioral Research, 53, 247–266. doi: 10.1080/00273171.2017.1419851
 #' @references Grassi, M., Luccio, R., & Di Blas, L. (2010). Circe: An r implementation of browne’s circular stochastic process model. Behavior Research Methods, 42(1), 55–73. doi:10.3758/BRM.42.1.55
-#' @references Lee, D., & Zhang, G. (in preparation). Circumplex models with ordinal data.
+#' @references Lee, D., & Zhang, G. (2022). Circumplex models with ordinal data. Structural Equation Modeling: A Multidisciplinary Journal, 1–18. doi: 10.1080/10705511.2022.2060231
 #' @references Zhang, G., Trichtinger, L., Lee, D., & Jiang, G. (2021). Polychoricrm: A computationally efficient r function for estimating polychoric correlations and their asymptotic covariance matrix. Structural Equation Modeling: A Multidisciplinary Journal. doi:10.1080/10705511.2021.1929996
 #' @importFrom EFAutilities efa
 #' @importFrom MASS mvrnorm
@@ -58,9 +58,9 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained",
     r=r
     if (type == "ordinal"){
       if (sum(eigen(Lpoly[[4]])$values < 0) == 0){
-        lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F)$unrotated
-      } else {lambda = efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F)$unrotated}
-    } else {lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F)$unrotated}
+        lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F, se = "none")$unrotated
+      } else {lambda = efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F, se = "none")$unrotated}
+    } else {lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F, se = "none")$unrotated}
 
 
     k=3
@@ -939,12 +939,12 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained",
   }
 
   estim <- est$par
+  estim2 = estim
 
   if (m==1){
     estim[(p-1+1):(p-1+m)] <- 1 - estim[(p-1+1):(p-1+m)]/(1+sum(estim[(p-1+1):(p-1+m)]))
   } else estim[(p-1+1):(p-1+m)] <- c(1, estim[(p-1+2):(p-1+m)])/(1+sum(estim[(p-1+1):(p-1+m)]))
 
-  estim2 = estim
   op = which(estim[1:(p-1)]>2*pi)
   estim[op] = estim[op] - 2*pi
   op2 = which(estim[1:(p-1)]<0)
