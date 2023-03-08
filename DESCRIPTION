@@ -1,7 +1,7 @@
 Package: CircumO
 Title: Ordinary Least Square Estimation of Circumplex Models
-Description: The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows both of continuous and ordinal variables.
-Version: 0.0
+Description: The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows normal, ordinal, time series variables.
+Version: 1.0
 License: Dayoung Lee
 Author: Dayoung Lee <dlee33@nd.edu>, Guangjian Zhang <Guangjian.Zhang.106@nd.edu>
 Depends: R
