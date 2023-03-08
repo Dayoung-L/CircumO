@@ -62,5 +62,5 @@ Dayoung Lee \email{dlee33@nd.edu}
 
 data("emotion") # data from (Trampe et al., 2015), N = 12108
 
-CircumO(emotion, m = 1, type = "ordinal")
+CircumO(emotion, m = 1, type = "O")
 }
