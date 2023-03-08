@@ -2,7 +2,7 @@
 \alias{CircumO}
 \title{Circumplex Models Ordinary Least Square Estimation}
 \usage{
-CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, icorrection = 0, ncore = 8, maxit = 1000, factr = 1e7 ,pgtol = 0, lmm = NULL, N_star = 10000)
+CircumO(rawdt, m=1, mcsc="unconstrained", type="N", simulation_based = F, icorrection = 0, ncore = 2, maxit = 1000, factr = 1e9, pgtol = 0, lmm = NULL, N_star = 10000, maxlag = 20, SE = 1)
 }
 \arguments{
 \item{rawdt}{indicates the raw data which is a n by p matrix where n is the number of participants and p is the number of manifest variables.}
@@ -11,7 +11,7 @@ CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, 
 
 \item{mcsc}{minimum common score correlation value: \code{"unconstrained"} (default), \code{-1}}
 
-\item{type}{indicates the type of data: \code{"ordinal"} (default), \code{"continuous"}}
+\item{type}{indicates the type of data: \code{"N"} (default, normal data), \code{"O"} (ordinal), \code{"TS"} (time series)}
 
 \item{simulation_based}{determines whether an asymptotic covariance matrix estimate is a sample-based ACM estimate or a Monte Carlo ACM estimate: \code{False} (default, sample-based ACM), \code{True} (Monte Carlo ACM)}
 
@@ -28,9 +28,14 @@ CircumO(rawdt, m=1, mcsc="unconstrained", type="ordinal", simulation_based = F, 
 \item{lmm}{is an integer giving the number of BFGS updates retained in the "L-BFGS-B" method. It defaults to number of free parameters. It is the carried-over argument from \code{optim}.}
 
 \item{N_star}{is the sample size of a simulated sample for Monte Carlo ACM. It defaults to 10000.}
+
+\item{maxlag}{is the maximum lag of lag correlations for computing an asymptotic covariance matrix of time series data. It defaults to 20.}
+
+\item{SE}{indicates the method to compute standard errors; 1: the method to use first-order derivative, 2: the method to use second-order derivative. It defaults to 1.}
+
 }
 \description{
-The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows both of continuous and ordinal variables.
+The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows normal, ordinal, time series variables.
 }
 \details{
 CirucmO
@@ -44,7 +49,7 @@ Monroe, S. (2018). Contributions to estimation of polychoric correlations. Multi
 
 Grassi, M., Luccio, R., & Di Blas, L. (2010). Circe: An r implementation of browne’s circular stochastic process model. Behavior Research Methods, 42(1), 55-73. doi:10.3758/BRM.42.1.55
 
-Lee, D., & Zhang, G. (in preparation). Circumplex models with ordinal data.
+Lee, D., & Zhang, G. (2022). Circumplex models with ordinal data. Structural Equation Modeling: A Multidisciplinary Journal, 1–18. doi: 10.1080/10705511.2022.2060231
 
 Zhang, G., Trichtinger, L., Lee, D., & Jiang, G. (2021). Polychoricrm: A computationally efficient r function for estimating polychoric correlations and their asymptotic covariance matrix. Structural Equation Modeling: A Multidisciplinary Journal. doi:10.1080/10705511.2021.1929996
 }
