@@ -1070,11 +1070,11 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
 
   if (any(is.na(coef$SE))) warning("NA in the standard error estimates")
 
-  result = list(coef = coef, test = resultT[1:5], optim = est)
+  result = list(coefficients = coef, test = resultT[1:5], optim = est)
 
   class(result) = "CircumO"
   return(result)
 }
 
 
-print.CircumO = function(x, ...) print(list(coef = round(x[[1]],2), test = x[[2]][1:5]))
+print.CircumO = function(x, ...) print(list(coefficients = round(x[[1]],2), test = x[[2]][1:5]))
