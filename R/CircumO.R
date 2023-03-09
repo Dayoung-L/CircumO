@@ -38,12 +38,16 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
 
   start.value = function(dt){
     r=r
+
     if (type == "O"){
       if (sum(eigen(Lpoly[[4]])$values < 0) == 0){
-        lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F)$unrotated
-      } else {lambda = efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F)$unrotated}
-    } else {lambda = efa(covmat = dt, factors = 3, n.obs = N, mtest = F)$unrotated}
-
+        lambda = suppressMessages(suppressWarnings(efa(covmat = dt, factors = 3, n.obs = N, mtest = F)))$unrotated
+      } else {
+        lambda = suppressMessages(suppressWarnings(efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F)))$unrotated
+      }
+    } else {
+      lambda = suppressMessages(suppressWarnings(efa(covmat = dt, factors = 3, n.obs = N, mtest = F)))$unrotated
+    }
 
     k=3
     dpsi = diag(diag(dt - lambda%*%t(lambda)))
@@ -1077,4 +1081,4 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
 }
 
 
-print.CircumO = function(x, ...) print(list(coefficients = round(x[[1]],2), test.stat = x[[2]][1:5]))
+print.CircumO = function(x, ...) print(list(coefficients = round(x[[1]],2), test.stat = lapply(x[[2]][1:5], function(x) round(x,2))))
