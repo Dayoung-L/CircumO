@@ -7,27 +7,27 @@
 #' @method print CircumO
 #' @export
 
-CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
-                     simulation_based = F, icorrection = 0, ncore = 2,
-                     maxit = 1000, factr = 1e9, pgtol = 0, lmm = NULL,
-                     N_star = 10000, maxlag = 20, SE = 1){
+CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
+                    simulation_based = F, icorrection = 0, ncore = 2,
+                    maxit = 1000, factr = 1e9, pgtol = 0, lmm = NULL,
+                    N_star = 10000, maxlag = 20, SE = 1){
 
   if (!type %in% c("N", "O", "TS")) stop("Specify the type of your data in the 'type' argument. N: Normal, O: Ordinal, TS: Time Series")
 
   SE = SE
   maxlag = maxlag
   m = m
-  N = nrow(rawdt)
-  p = ncol(rawdt)
+  N = nrow(object)
+  p = ncol(object)
 
   library(Turbofuns)
   library(EFAutilities)
   library(MASS)
 
   if (type == "O"){
-    Lpoly = PolychoricRM(iRaw = rawdt,IAdjust = 0, NCore = ncore, estimate.acm=T)
+    Lpoly = PolychoricRM(iRaw = object,IAdjust = 0, NCore = ncore, estimate.acm=T)
     dt = Lpoly[[2]]
-  } else {dt = cor(rawdt)}
+  } else {dt = cor(object)}
 
   k=3
   K=pi/180
@@ -43,7 +43,7 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
       if (sum(eigen(Lpoly[[4]])$values < 0) == 0){
         lambda = suppressMessages(suppressWarnings(efa(covmat = dt, factors = 3, n.obs = N, mtest = F)))$unrotated
       } else {
-        lambda = suppressMessages(suppressWarnings(efa(rawdt, dist = "ordinal", factors = 3, n.obs = N, mtest = F)))$unrotated
+        lambda = suppressMessages(suppressWarnings(efa(object, dist = "ordinal", factors = 3, n.obs = N, mtest = F)))$unrotated
       }
     } else {
       lambda = suppressMessages(suppressWarnings(efa(covmat = dt, factors = 3, n.obs = N, mtest = F)))$unrotated
@@ -95,8 +95,7 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
       betas[2] = beta1
       betas = betas/betas[2]
       par <- c(angle[-c(r)]*(pi/180),betas[-c(2)],v)
-    }
-    else {
+    } else {
       betas=matrix(0,1,m+1);
       betas[1] = (1+mcsc)/2
       betas[2] = (1-mcsc)/2
@@ -447,7 +446,7 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
         list(corr = Gamma[1,,], asc = asc)
       }
 
-      u.r = TSACM(rawdt)$asc
+      u.r = TSACM(object)$asc
 
       M.Select = matrix(0,p2,p.star)
       ij=0
@@ -641,6 +640,21 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
     ex2 = t(ex)
 
     Delta = dPxdr[ex2[upper.tri(ex2)],]
+    Delta2 = Delta # For DD
+
+    if (mcsc == -1){
+      if (m == 1){
+        Delta = Delta[,-p]
+      }
+
+      if (m == 2){
+        Delta = Delta[,-c(p,(p+1))]
+      }
+
+      if (m > 2){
+        Delta = Delta[,-c(p, c(p - 1 + seq(2,m,by=2)))]
+      }
+    }
 
     null <-function(M)
     {
@@ -996,51 +1010,144 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
 
       d2Pxdvdv <- do.call(rbind, d2Pxdvdv)
 
-      DD = (t(Delta)%*%Delta)
+      DD = (t(Delta2)%*%Delta2)
       AA = matrix(0,length(par),length(par))
       BB = t(Delta)%*%Y.Hat%*%Delta
       hh[[1]] <- NULL
 
-      for (i in 1:(length(par)))
-      {for (j in i:(length(par)))
-      {if (i <= (p-1) & j <= (p-1)){
-        if (i == j) {d2Pxdrdr = dPxdtdt.2[i,]
-        } else {
-          d2Pxdrdr = rep(0,p*(p-1)/2)
-          d2Pxdrdr[(i*p - i*(i+1)/2 + (j-i))] = hh[[i]][(j-i)]}
-      }else if (i <= (p-1) & j > (p-1) & j <= (p+m-1))
-      {d2Pxdrdr = d2Pxdbdt[(m*(i-1)+(j-(p-1))),] # dtdb
-      }else if (i <= (p-1) & j > (p+m-1))
-      {d2Pxdrdr = d2Pxdtdv[(p*(i-1)+(j-(p+m-1))),]
-      }else if (i > (p-1) & i <= (p+m-1) & j > (p-1) & j <= (p+m-1))
-      {d2Pxdrdr = rep(0,p*(p-1)/2)
-      }else if (i > (p-1) & i <= (p+m-1) & j > (p+m-1))
-      {d2Pxdrdr = d2Pxdbdv[(p*(i-(p-1)-1)+(j-(p+m-1))),]
-      }else if (i > (p+m-1) & j > (p+m-1))
-      {ii = i - (p+m-1); jj = j - (p+m-1)
-      d2Pxdrdr = d2Pxdvdv[((2*p-(ii-2))*(ii-1)/2 + j - i + 1),]
-      }
+      for (i in 1:(length(par))){
+        for (j in i:(length(par))){
+          if (i <= (p-1) & j <= (p-1)){
+            if (i == j) {
+              d2Pxdrdr = dPxdtdt.2[i,]
+            } else {
+              d2Pxdrdr = rep(0,p*(p-1)/2)
+              d2Pxdrdr[(i*p - i*(i+1)/2 + (j-i))] = hh[[i]][(j-i)]}
+          }else if (i <= (p-1) & j > (p-1) & j <= (p+m-1)){
+            d2Pxdrdr = d2Pxdbdt[(m*(i-1)+(j-(p-1))),] # dtdb
+          }else if (i <= (p-1) & j > (p+m-1)){
+            d2Pxdrdr = d2Pxdtdv[(p*(i-1)+(j-(p+m-1))),]
+          }else if (i > (p-1) & i <= (p+m-1) & j > (p-1) & j <= (p+m-1)){
+            d2Pxdrdr = rep(0,p*(p-1)/2)
+          }else if (i > (p-1) & i <= (p+m-1) & j > (p+m-1)){
+            d2Pxdrdr = d2Pxdbdv[(p*(i-(p-1)-1)+(j-(p+m-1))),]
+          }else if (i > (p+m-1) & j > (p+m-1)){
+            ii = i - (p+m-1); jj = j - (p+m-1)
+            d2Pxdrdr = d2Pxdvdv[((2*p-(ii-2))*(ii-1)/2 + j - i + 1),]
+          }
 
-        AA[i,j] = (DD[i,j] + d2Pxdrdr%*%res)}
+          AA[i,j] = (DD[i,j] + d2Pxdrdr%*%res)
+        }
       }
 
       AA.t = t(AA)
       diag(AA.t) = 0
       AA = AA + AA.t
 
+      if (mcsc == -1){
+        if (m == 1){
+          AA = AA[ ,-p][-p,]
+        }
+
+        if (m > 1 & m < 4){
+          AA = AA[ ,-c(p, (p+1))][-c(p, (p+1)),]
+        }
+
+        if (m > 3){
+          AA = AA[ ,-c((p-1) + c(1, seq(2,m,by=2)))][-c((p-1) + c(1, seq(2,m,by=2))),]
+        }
+      }
+
       ##se of beta1 ~
       se = sqrt(diag(solve(AA)%*%BB%*%solve(AA)))
+
+      if (mcsc == -1){
+        if (m == 1){
+          se = append(se, 0, after = (p-1))
+        }
+
+        if (m > 1 & m < 4){
+          se = append(se, c(0,0), after = (p-1))
+        }
+
+        if (m > 3){
+          se = append(se, c(0,0), after = (p-1))
+
+          ind = seq(4, m, by = 2)
+
+          for (i in 1:length(ind)){
+            se = append(se, 0, after = (p + ind[i] -2))
+          }
+        }
+      }
+
       se[1:(p-1)] = se[1:(p-1)]*180/pi
     } else {
+
       cov.est = solve( t(Delta) %*% Delta ) %*% ( t(Delta) %*% Y.Hat %*% Delta) %*% solve( t(Delta) %*% Delta )
 
       ## se of beta1 ~
       se = sqrt(diag(cov.est))
+
+      if (mcsc == -1){
+        if (m == 1){
+          se = append(se, 0, after = (p-1))
+        }
+
+        if (m > 1 & m < 4){
+          se = append(se, c(0,0), after = (p-1))
+        }
+
+        if (m > 3){
+          se = append(se, c(0,0), after = (p-1))
+
+          ind = seq(4, m, by = 2)
+
+          for (i in 1:length(ind)){
+            se = append(se, 0, after = (p + ind[i] -2))
+          }
+        }
+      }
+
       se[1:(p-1)] = se[1:(p-1)]*180/pi
     }
 
-    resultA = list(test.stat = ts.st, RMSEA = RMSEA, perferct.fit = p.perfect,
-                   close.fit = p.close, df = df, s.e = se/sqrt(N))
+    statistic.sample = ts.st
+    confid.level = 0.9
+    n = N
+
+    p.perfect = 1 - pchisq(statistic.sample,df,ncp=0)
+    p.close = 1 - pchisq(statistic.sample,df,ncp=0.0025*n*df)
+
+    ### Compute the lower end and the upper end of the noncentrality parameter
+
+    find.lambda <- function(x,f.dis,d,prob) pchisq(f.dis,d,ncp=x) - prob
+
+    lambda.range = statistic.sample
+    for (i in 1:10) {
+      if (pchisq(statistic.sample,df,ncp=lambda.range)<(1-confid.level)/2) break
+      lambda.range = lambda.range * 2
+    }
+
+    if (p.perfect > (1 - confid.level)/2) {
+      l.lambda = 0
+    } else {
+      temp = uniroot (find.lambda, interval= c(0,lambda.range),f.dis = statistic.sample, d=df, prob= (0.5 + confid.level/2) )
+      l.lambda = temp$root
+    }
+
+    if (p.perfect > (1 + confid.level)/2) {
+      u.lambda = 0
+    } else{
+      temp = uniroot (find.lambda, c(0,lambda.range),f.dis = statistic.sample, d=df, prob= (0.5 - confid.level/2) )
+      u.lambda = temp$root
+    }
+
+    RMSEA.l = sqrt(l.lambda/(n*df))
+    RMSEA.u = sqrt(u.lambda/(n*df))
+
+    resultA = list(test.stat = ts.st, RMSEA = RMSEA, RMSEA.CI = c(RMSEA.l, RMSEA.u),
+                   perferct.fit = p.perfect, close.fit = p.close, df = df, s.e = se/sqrt(N))
 
     return(resultA)
   }
@@ -1074,11 +1181,11 @@ CircumO <- function(rawdt, m=1, mcsc="unconstrained", type="N",
 
   if (any(is.na(coef$SE))) warning("NA in the standard error estimates")
 
-  result = list(coefficients = coef, test.stat = resultT[1:5], optim = est)
+  result = list(coefficients = coef, test.stat = resultT[1:6], optim = est)
 
   class(result) = "CircumO"
   return(result)
 }
 
 
-print.CircumO = function(x, ...) print(list(coefficients = round(x[[1]],2), test.stat = lapply(x[[2]][1:5], function(x) round(x,2))))
+print.CircumO = function(x, ...) print(list(coefficients = round(x[[1]],2), test.stat = lapply(x[[2]][1:5], function(x) round(x,2)), df = x[[2]][[6]]))

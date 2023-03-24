@@ -1,11 +1,11 @@
 \name{CircumO}
 \alias{CircumO}
-\title{Circumplex Models Ordinary Least Square Estimation}
+\title{Ordinary Least Square Estimation of Circumplex Models}
 \usage{
-CircumO(rawdt, m=1, mcsc="unconstrained", type="N", simulation_based = F, icorrection = 0, ncore = 2, maxit = 1000, factr = 1e9, pgtol = 0, lmm = NULL, N_star = 10000, maxlag = 20, SE = 1)
+CircumO(object, m=1, mcsc="unconstrained", type="N", simulation_based = F, icorrection = 0, ncore = 2, maxit = 1000, factr = 1e9, pgtol = 0, lmm = NULL, N_star = 10000, maxlag = 20, SE = 1)
 }
 \arguments{
-\item{rawdt}{indicates the raw data which is a n by p matrix where n is the number of participants and p is the number of manifest variables.}
+\item{object}{indicates the raw data which is a n by p matrix where n is the number of participants and p is the number of manifest variables.}
 
 \item{m}{indicates the number of cosine function coefficients. Defaults to 1.}
 
@@ -37,11 +37,25 @@ CircumO(rawdt, m=1, mcsc="unconstrained", type="N", simulation_based = F, icorre
 \description{
 The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows normal, ordinal, time series variables.
 }
+
 \details{
 CirucmO
 
 Code modified from function CircE.BFGS obtained from https://cran.r-project.org/src/contrib/Archive/CircE/CircE_1.1.tar.gz
 }
+
+\value{
+\item{coefficients}{Estimates: point estimates of parameters, SE: standard error estiamtes of point estimates.}
+
+\item{test.stat}{test.stat: Model fit test statistic,
+RMSEA: the root mean square error of approximation,
+RMSEA.CI: the confidence interval of RMSEA,
+perfect.fit: p-value of perfect fit test,
+close.fit: p-value of close fit test.}
+
+\item{optim}{result object of function "optim"}
+}
+
 \references{
 Browne, M. W. (1992). Circumplex models for correlation matrices. Psychometrika, 57, 469-497. doi: 10.1007/BF02294416
 

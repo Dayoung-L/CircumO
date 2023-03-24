@@ -2,6 +2,7 @@
 
 S3method(print,CircumO)
 export(CircumO)
+export(CircumPlot)
 importFrom(EFAutilities,efa)
 importFrom(MASS,mvrnorm)
 importFrom(Turbofuns,PolychoricRM)
