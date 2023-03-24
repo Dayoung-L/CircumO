@@ -51,7 +51,8 @@ Code modified from function CircE.BFGS obtained from https://cran.r-project.org/
 RMSEA: the root mean square error of approximation,
 RMSEA.CI: the confidence interval of RMSEA,
 perfect.fit: p-value of perfect fit test,
-close.fit: p-value of close fit test.}
+close.fit: p-value of close fit test,
+df: degree of freedom.}
 
 \item{optim}{result object of function "optim"}
 }
@@ -72,9 +73,16 @@ Dayoung Lee \email{dlee33@nd.edu}
 }
 
 \examples{
-#An example using the data set included in the package:
+# An example using the data set included in the package:
 
+## Ordinal data
 data("emotion") # data from (Trampe et al., 2015), N = 12108
 
 CircumO(emotion, m = 1, type = "O")
+
+## Time series data
+data("affect") # data from (Watson & Clark, 1994), T = 70
+
+CircumO(affect, m = 1, type = "TS")
+
 }
