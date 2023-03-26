@@ -35,7 +35,7 @@ CircumO(object, m=1, mcsc="unconstrained", type="N", simulation_based = F, icorr
 
 }
 \description{
-The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows normal, ordinal, time series variables.
+The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows normal, ordinal, and time series variables.
 }
 
 \details{
