@@ -65,22 +65,24 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
     lambdasim = lambdastar%*%U
     lambdadot = matrix(data=NA, nrow = p, ncol = 2)
 
-    for(i in 1:p)
-    {for(j in 1:2)
-    {lambdadot[i,j] = lambdasim[i,j] / sqrt(lambdasim[i,1]^2 + lambdasim[i,2]^2)}
+    for(i in 1:p){
+      for(j in 1:2){
+        lambdadot[i,j] = lambdasim[i,j] / sqrt(lambdasim[i,1]^2 + lambdasim[i,2]^2)
+      }
     }
 
-    theta = function(lambdadot)
-    {a = rep(0, nrow(lambdadot))
+    theta = function(lambdadot){
+      a = rep(0, nrow(lambdadot))
 
-    for (i in seq(1:nrow(lambdadot))[-r])
-    {if ((lambdadot[i,2]*lambdadot[r,1] - lambdadot[i,1]*lambdadot[r,2]) >= 0)
-    {a[i] = acos(lambdadot[i,1]*lambdadot[r,1] + lambdadot[i,2]*lambdadot[r,2])*180/pi}
-      else
-      {a[i] = 360 - acos(lambdadot[i,1]*lambdadot[r,1] + lambdadot[i,2]*lambdadot[r,2])*180/pi}
-    }
+      for (i in seq(1:nrow(lambdadot))[-r]){
+        if ((lambdadot[i,2]*lambdadot[r,1] - lambdadot[i,1]*lambdadot[r,2]) >= 0){
+          a[i] = acos(lambdadot[i,1]*lambdadot[r,1] + lambdadot[i,2]*lambdadot[r,2])*180/pi
+        } else {
+          a[i] = 360 - acos(lambdadot[i,1]*lambdadot[r,1] + lambdadot[i,2]*lambdadot[r,2])*180/pi
+        }
+      }
 
-    return(a)
+      return(a)
     }
 
     angle = theta(lambdadot)
@@ -113,25 +115,37 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       p = ncol(dt)
       ang1=par[1:(p-1)]
       ang=append(ang1,0,r-1)   #ang=ang2*(pi/180)
-      if (m==1) {alpha = c(par[(p-1+1)],1)
-      } else {alpha=  c(par[((p-1)+1)],1,par[((p-1)+2):((p-1)+(m))])}
-      if (mcsc=="unconstrained") {b=alpha/sum(alpha)
-      } else if (mcsc==-1) {alpha[seq(1,(m+1),by=2)]=0; b=alpha/sum(alpha)
-      if (m<=2) b[2] =1 else b[2] = 1 - sum(b[seq(4,(m+1),by=2)])
-      } else {if (m==1){b=c((mcsc+1)/2,(1-mcsc)/2)
-      }else if (m==2){b=alpha/sum(alpha);b[1]=(mcsc+1)/2 - b[3]; b[2]=(1-mcsc)/2
-      } else {b = alpha/sum(alpha);b[1] = (mcsc+1)/2 - sum(b[seq(3,(m+1),by=2)])
-      b[2] = (1-mcsc)/2 - sum(b[seq(4,(m+1),by=2)])}}
+      if (m==1) {
+        alpha = c(par[(p-1+1)],1)
+      } else {
+        alpha=  c(par[((p-1)+1)],1,par[((p-1)+2):((p-1)+(m))])
+      }
+
+      if (mcsc=="unconstrained") {
+        b=alpha/sum(alpha)
+      } else if (mcsc==-1) {
+        alpha[seq(1,(m+1),by=2)]=0; b=alpha/sum(alpha)
+        if (m<=2) b[2] =1 else b[2] = 1 - sum(b[seq(4,(m+1),by=2)])
+      } else {
+        if (m==1){
+          b=c((mcsc+1)/2,(1-mcsc)/2)
+        } else if (m==2) {
+          b=alpha/sum(alpha);b[1]=(mcsc+1)/2 - b[3]; b[2]=(1-mcsc)/2
+        } else {
+          b = alpha/sum(alpha);b[1] = (mcsc+1)/2 - sum(b[seq(3,(m+1),by=2)])
+          b[2] = (1-mcsc)/2 - sum(b[seq(4,(m+1),by=2)])
+        }
+      }
 
       v=par[(length(par)-p+1):length(par)]
       z2 = rep(0,p)
-      for (i in 1:p)
-      {z2[i] = (1/(1+v[i]))^(1/2)}
+      for (i in 1:p) {z2[i] = (1/(1+v[i]))^(1/2)}
       M=matrix(c(0),p,p,byrow=TRUE)
       for(i in 1:p){
         for(j in 1:p){
           M[i,j]=c(b[-1])%*%cos(c(1:m)*(ang[j]-ang[i]))
-        }}
+        }
+      }
       Pc=M+matrix(b[1],p,p)
       Dv=diag(v,p)
       Dz2=diag(z2);
@@ -146,26 +160,37 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       p = ncol(dt)
       ang1=par[1:(p-1)]
       ang=append(ang1,0,r-1)
-      if (m==1) {alpha = c(par[(p-1+1)],1)
-      } else {alpha=  c(par[((p-1)+1)],1,par[((p-1)+2):((p-1)+(m))])}
+      if (m==1) {
+        alpha = c(par[(p-1+1)],1)
+      } else {
+        alpha=  c(par[((p-1)+1)],1,par[((p-1)+2):((p-1)+(m))])
+      }
 
-      if (mcsc=="unconstrained") {b=alpha/sum(alpha)
-      } else if (mcsc==-1) {alpha[seq(1,(m+1),by=2)]=0; b=alpha/sum(alpha)
-      if (m<=2) b[2] =1 else b[2] = 1 - sum(b[seq(4,(m+1),by=2)])
-      } else {if (m==1){b=c((mcsc+1)/2,(1-mcsc)/2)
-      } else if (m==2){b=alpha/sum(alpha);b[1]=(mcsc+1)/2 - b[3]; b[2]=(1-mcsc)/2
-      } else {b = alpha/sum(alpha);b[1] = (mcsc+1)/2 - sum(b[seq(3,(m+1),by=2)])
-      b[2] = (1-mcsc)/2 - sum(b[seq(4,(m+1),by=2)])}}
+      if (mcsc=="unconstrained") {
+        b=alpha/sum(alpha)
+      } else if (mcsc==-1) {
+        alpha[seq(1,(m+1),by=2)]=0; b=alpha/sum(alpha)
+        if (m<=2) b[2] =1 else b[2] = 1 - sum(b[seq(4,(m+1),by=2)])
+      } else {
+        if (m==1){
+          b=c((mcsc+1)/2,(1-mcsc)/2)
+        } else if (m==2){
+          b=alpha/sum(alpha); b[1]=(mcsc+1)/2 - b[3]; b[2]=(1-mcsc)/2
+        } else {
+          b = alpha/sum(alpha); b[1] = (mcsc+1)/2 - sum(b[seq(3,(m+1),by=2)])
+          b[2] = (1-mcsc)/2 - sum(b[seq(4,(m+1),by=2)])
+        }
+      }
 
       v=par[(length(par)-p+1):length(par)]
       z2 = rep(0,p)
-      for (i in 1:p)
-      {z2[i] = (1/(1+v[i]))^(1/2)}
+      for (i in 1:p) {z2[i] = (1/(1+v[i]))^(1/2)}
       M=matrix(c(0),p,p,byrow=TRUE)
       for(i in 1:p){
         for(j in 1:p){
           M[i,j]=c(b[-1])%*%cos(c(1:m)*(ang[j]-ang[i]))
-        }}
+        }
+      }
       Pc=M+matrix(b[1],p,p)
       Dv=diag(v,p)
       Dz2=diag(z2)
@@ -175,28 +200,25 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       angi <- function(ang,i,j,m){
         x = rep(0, m)
 
-        for (k in 1:m)
-        {x[k] = k*b[k+1]*sin(k*(ang[j]-ang[i]))}
+        for (k in 1:m) {x[k] = k*b[k+1]*sin(k*(ang[j]-ang[i]))}
 
-        z2[i]*z2[j]*sum(x)}
+        z2[i]*z2[j]*sum(x)
+      }
 
-      angj <- function(ang,i,j,m)
-      {x = rep(0, m)
-
-      for (k in 1:m)
-      {x[k] = -k*b[k+1]*sin(k*(ang[j]-ang[i]))}
-
-      z2[i]*z2[j]*sum(x)}
+      angj <- function(ang,i,j,m) {
+        x = rep(0, m)
+        for (k in 1:m){x[k] = -k*b[k+1]*sin(k*(ang[j]-ang[i]))}
+        z2[i]*z2[j]*sum(x)
+      }
 
       dPxdthe <- list()
 
-      for (ii in 1:(p-1)){dPxdthe[[ii]] <- matrix(0, (p-ii), (p))}
+      for (ii in 1:(p-1)) {dPxdthe[[ii]] <- matrix(0, (p-ii), (p))}
 
-      for (ii in 1:(p-1))
-      {
-        for (l in 1:(p-ii))
-        { dPxdthe[[ii]][l,ii] <- angi(ang,ii,(ii+l),m)
-        dPxdthe[[ii]][l,(ii+l)] <- angj(ang,ii,(ii+l),m)
+      for (ii in 1:(p-1)){
+        for (l in 1:(p-ii)){
+          dPxdthe[[ii]][l,ii] <- angi(ang,ii,(ii+l),m)
+          dPxdthe[[ii]][l,(ii+l)] <- angj(ang,ii,(ii+l),m)
         }
       }
 
@@ -206,16 +228,13 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       if (mcsc == "unconstrained") {
         beta = list()
-        for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), (m))}
+        for (ii in 1:(p-1)) {beta[[ii]] <- matrix(0, (p-ii), (m))}
 
-        for (ii in 1:(p-1))
-        {
-          for (l in 1:(p-ii))
-          {
+        for (ii in 1:(p-1)){
+          for (l in 1:(p-ii)){
             bt <- rep(0, m)
             for (mm in 1:m) {bt[(mm)] <- z2[ii]*z2[ii+l]*(cos(mm*(ang[ii+l]-ang[ii]))/sum(alpha) - (alpha[-1]%*%(cos((1:m)*(ang[ii+l]-ang[ii]))))/sum(alpha)^2 - alpha[1]/sum(alpha)^2)}
             bt[1] <- z2[ii]*z2[ii+l]*(1/sum(alpha)-alpha[1]/sum(alpha)^2 -1*sum( (alpha[-c(1)]/sum(alpha)^2)*cos(c(1:m)*(ang[ii+l]-ang[ii]) ) ) )
-
             beta[[ii]][l,] <- bt
           }
         }
@@ -225,41 +244,43 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       } else if (mcsc == -1){
 
         beta = list()
-        for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
+        for (ii in 1:(p-1)) {beta[[ii]] <- matrix(0, (p-ii), m)}
 
-        for (ii in 1:(p-1))
-        {
-          for (l in 1:(p-ii))
-          {
+        for (ii in 1:(p-1)){
+          for (l in 1:(p-ii)){
             bt <- rep(0, m)
             for (mm in 1:m) {bt[(mm)] <- z2[ii]*z2[ii+l]*(cos(mm*(ang[ii+l]-ang[ii]))/sum(alpha) - (alpha[-1]%*%(cos((1:m)*(ang[ii+l]-ang[ii]))))/sum(alpha)^2 - alpha[1]/sum(alpha)^2)}
             bt[1] <- z2[ii]*z2[ii+l]*(1/sum(alpha)-alpha[1]/sum(alpha)^2 -1*sum( (alpha[-c(1)]/sum(alpha)^2)*cos(c(1:m)*(ang[ii+l]-ang[ii]) ) ) )
-
             beta[[ii]][l,] <- bt
           }
         }
 
         dPxdb <- do.call(rbind, beta)
 
-        if (m <= 2) {dPxdb[,1:(m)] <- 0} else {dPxdb <- do.call(rbind, beta)
-        dPxdb[,seq(2,m,by=2)] = 0; dPxdb[,1] = 0
+        if (m <= 2) {
+          dPxdb[,1:(m)] <- 0
+        } else {
+          dPxdb <- do.call(rbind, beta)
+          dPxdb[,seq(2,m,by=2)] = 0
+          dPxdb[,1] = 0
         }
       } else {
-
         beta = list()
-        for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
+        for (ii in 1:(p-1)) {beta[[ii]] <- matrix(0, (p-ii), m)}
 
-        for (ii in 1:(p-1))
-        {
-          for (l in 1:(p-ii))
-          {
+        for (ii in 1:(p-1)){
+          for (l in 1:(p-ii)){
             bt <- rep(0, m)
-            if (m==1) {for (mm in seq(1,m,by=2)) {bt[mm] <- z2[ii]*z2[ii+l]*(cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii]))}
+            if (m==1) {
+              for (mm in seq(1,m,by=2)) {bt[mm] <- z2[ii]*z2[ii+l]*(cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii]))}
             }else {
               for (mm in seq(1,m,by=2)) {bt[mm] <- z2[ii]*z2[ii+l]*(((1/sum(alpha))-alpha[mm]/sum(alpha)^2)*(cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii])))}
-              for (mm in seq(2,m,by=2)) {bt[mm] <- z2[ii]*z2[ii+l]*(((1/sum(alpha))-alpha[mm]/sum(alpha)^2)*(cos(mm*(ang[ii+l]-ang[ii]))-1))}}
-            bt[1] <- z2[ii]*z2[ii+l]*(1/sum(alpha)-alpha[1]/sum(alpha)^2 -1*sum( (alpha[-c(1)]/sum(alpha)^2)*cos(c(1:m)*(ang[ii+l]-ang[ii]) ) ) )
-            beta[[ii]][l,] <- bt}
+              for (mm in seq(2,m,by=2)) {bt[mm] <- z2[ii]*z2[ii+l]*(((1/sum(alpha))-alpha[mm]/sum(alpha)^2)*(cos(mm*(ang[ii+l]-ang[ii]))-1))
+              }
+            }
+            bt[1] <- z2[ii]*z2[ii+l]*(1/sum(alpha)-alpha[1]/sum(alpha)^2 -1*sum( (alpha[-c(1)]/sum(alpha)^2)*cos(c(1:m)*(ang[ii+l]-ang[ii]))))
+            beta[[ii]][l,] <- bt
+          }
         }
 
 
@@ -272,7 +293,6 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       dPxdv = matrix(0,p*(p-1)/2,p)
 
       for (l in 1:p) {
-
         kk <- matrix(0,p,p)
         diag(kk)[l] <- (-1/2)*((1+v[l])^(-3/2))
 
@@ -282,9 +302,7 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
         dPxdvl = (kk%*%(Pc+Dv)%*%Dz2) + t(kk%*%(Pc+Dv)%*%Dz2) + Dz2%*%jj%*%Dz2
 
         dPxdv[,l] <-  as.vector(dPxdvl[lower.tri(dPxdvl)])
-
       }
-
 
       dPxdr = cbind(dPxdthe[,-r], dPxdb, dPxdv)
 
@@ -293,7 +311,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       dfdr = -2*t(dPxdr)%*%res
 
-      dfdr}
+      dfdr
+    }
 
   up = c(rep(Inf,(2*p + m -1)))
   low = c(rep(-Inf,(p-1)),rep(0,m),rep(0,p))
@@ -339,8 +358,11 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
     if (type == "O"){
       if (simulation_based == T){
         set.seed(1)
-        if (sum(eigen(dt)$values >= 0) == p){samp = mvrnorm(n = N_star, mu = rep(0,p), dt, tol = 1e-06, empirical = F)
-        } else {samp = mvrnorm(n = N_star, mu = rep(0,p), Dz2%*%(Pc+Dv)%*%Dz2, tol = 1e-06, empirical = F)}
+        if (sum(eigen(dt)$values >= 0) == p){
+          samp = mvrnorm(n = N_star, mu = rep(0,p), dt, tol = 1e-06, empirical = F)
+        } else {
+          samp = mvrnorm(n = N_star, mu = rep(0,p), Dz2%*%(Pc+Dv)%*%Dz2, tol = 1e-06, empirical = F)
+        }
 
         samp2 = samp
 
@@ -354,7 +376,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
         Y.Hat = PolychoricRM(iRaw=samp2, IAdjust=3, NCore=ncore, estimate.acm=T)[[4]]
       } else {
 
-        Y.Hat = Lpoly[[4]]}
+        Y.Hat = Lpoly[[4]]
+      }
 
     } else if (type == "TS") {
 
@@ -545,28 +568,27 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
     angi <- function(ang,i,j,m){
       x = rep(0, m)
 
-      for (k in 1:m)
-      {x[k] = k*b[k+1]*sin(k*(ang[j]-ang[i]))}
+      for (k in 1:m) {x[k] = k*b[k+1]*sin(k*(ang[j]-ang[i]))}
 
-      z2[i]*z2[j]*sum(x)}
+      z2[i]*z2[j]*sum(x)
+    }
 
-    angj <- function(ang,i,j,m)
-    {x = rep(0, m)
+    angj <- function(ang,i,j,m){
+      x = rep(0, m)
 
-    for (k in 1:m)
-    {x[k] = -k*b[k+1]*sin(k*(ang[j]-ang[i]))}
+      for (k in 1:m){x[k] = -k*b[k+1]*sin(k*(ang[j]-ang[i]))}
 
-    z2[i]*z2[j]*sum(x)}
+      z2[i]*z2[j]*sum(x)
+    }
 
     dPxdthe <- list()
 
     for (ii in 1:(p-1)){dPxdthe[[ii]] <- matrix(0, (p-ii), (p))}
 
-    for (ii in 1:(p-1))
-    {
-      for (l in 1:(p-ii))
-      { dPxdthe[[ii]][l,ii] <- angi(ang,ii,(ii+l),m)
-      dPxdthe[[ii]][l,(ii+l)] <- angj(ang,ii,(ii+l),m)
+    for (ii in 1:(p-1)){
+      for (l in 1:(p-ii)){
+        dPxdthe[[ii]][l,ii] <- angi(ang,ii,(ii+l),m)
+        dPxdthe[[ii]][l,(ii+l)] <- angj(ang,ii,(ii+l),m)
       }
     }
 
@@ -578,10 +600,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       beta = list()
       for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
 
-      for (ii in 1:(p-1))
-      {
-        for (l in 1:(p-ii))
-        {
+      for (ii in 1:(p-1)){
+        for (l in 1:(p-ii)){
           bt <- rep(0, m)
           for (mm in 1:(m)) {bt[mm] <- z2[ii]*z2[ii+l]*(cos(mm*(ang[ii+l]-ang[ii]))-1)}
           beta[[ii]][l,] <- bt
@@ -595,10 +615,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       beta = list()
       for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
 
-      for (ii in 1:(p-1))
-      {
-        for (l in 1:(p-ii))
-        {
+      for (ii in 1:(p-1)){
+        for (l in 1:(p-ii)){
           bt <- rep(0, m)
           for (mm in 1:(m)) {bt[mm] <- z2[ii]*z2[ii+l]*(cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii]))}
           beta[[ii]][l,] <- bt
@@ -607,8 +625,13 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       dPxdb <- do.call(rbind, beta)
 
-      if (m <= 2) {dPxdb[,1:m] <- 0} else {dPxdb <- do.call(rbind, beta)
-      dPxdb[,seq(2,m,by=2)] = 0; dPxdb[,1] = 0}}
+      if (m <= 2) {
+        dPxdb[,1:m] <- 0
+      } else {
+        dPxdb <- do.call(rbind, beta)
+        dPxdb[,seq(2,m,by=2)] = 0; dPxdb[,1] = 0
+      }
+    }
 
     # nu part
 
@@ -643,21 +666,14 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
     Delta2 = Delta # For DD
 
     if (mcsc == -1){
-      if (m == 1){
-        Delta = Delta[,-p]
-      }
+      if (m == 1) {Delta = Delta[,-p]}
 
-      if (m == 2){
-        Delta = Delta[,-c(p,(p+1))]
-      }
+      if (m == 2) {Delta = Delta[,-c(p,(p+1))]}
 
-      if (m > 2){
-        Delta = Delta[,-c(p, c(p - 1 + seq(2,m,by=2)))]
-      }
+      if (m > 2) {Delta = Delta[,-c(p, c(p - 1 + seq(2,m,by=2)))]}
     }
 
-    null <-function(M)
-    {
+    null <-function(M){
       tmp <- qr(M)
       set <- if (tmp$rank == 0L)
         seq_len(ncol(M))
@@ -697,10 +713,11 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
       k = c(1:m)
       hh = list()
 
-      for (i in 1:(p-1))
-      {hh[[i]] = rep(0,p-i)
-      for (j in (i+1):p)
-      {hh[[i]][(j-i)] = (k^2%*%(b[2:(m+1)]*cos(k*(ang[j]-ang[i]))))*z2[j]*z2[i]}
+      for (i in 1:(p-1)){
+        hh[[i]] = rep(0,p-i)
+        for (j in (i+1):p){
+          hh[[i]][(j-i)] = (k^2%*%(b[2:(m+1)]*cos(k*(ang[j]-ang[i]))))*z2[j]*z2[i]
+        }
       }
 
       xx = rep(0,p*(p-1)/2)
@@ -714,10 +731,11 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       nn=list()
 
-      for (i in (1:(p-1)))
-      {nn[[i]] = matrix(0,p,(p-i))
-      for (j in 1:(p-i))
-      {nn[[i]][i,j] = (-k^2%*%(b[2:(m+1)]*cos(k*(ang[(i+j)]-ang[i]))))*z2[(i+j)]*z2[i]}
+      for (i in (1:(p-1))){
+        nn[[i]] = matrix(0,p,(p-i))
+        for (j in 1:(p-i)){
+          nn[[i]][i,j] = (-k^2%*%(b[2:(m+1)]*cos(k*(ang[(i+j)]-ang[i]))))*z2[(i+j)]*z2[i]
+        }
       }
 
       dPxdtdt.2 <- do.call(cbind, nn)
@@ -725,13 +743,16 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       dPxdtdt.2[1,1] = (-k^2%*%(b[2:(m+1)]*cos(k*(ang[(2)]-ang[1]))))*z2[(2)]*z2[1]
 
-      for (i in 2:(p-1))
-      { NN = c(i,(p-2):((p-2)-(i-2)))
-      WW = rep(0,(i))
-      for (MM in 1:i){WW[MM] = sum(NN[1:MM])}
-      for (JJ in WW)
-      { j = which(JJ == WW)
-      dPxdtdt.2[i,JJ] = (-k^2%*%(b[2:(m+1)]*cos(k*(ang[(i+1)]-ang[j]))))*z2[(i+1)]*z2[j]}
+      for (i in 2:(p-1)){
+        NN = c(i,(p-2):((p-2)-(i-2)))
+        WW = rep(0,(i))
+        for (MM in 1:i){
+          WW[MM] = sum(NN[1:MM])
+        }
+        for (JJ in WW){
+          j = which(JJ == WW)
+          dPxdtdt.2[i,JJ] = (-k^2%*%(b[2:(m+1)]*cos(k*(ang[(i+1)]-ang[j]))))*z2[(i+1)]*z2[j]
+        }
       }
 
       d2Pxdtdt <- rbind(dPxdtdt.1, dPxdtdt.2)
@@ -740,13 +761,14 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       dPxdtdbi=list()
 
-      for (i in 1:(p-1))
-      {dPxdtdbi[[i]] = matrix(0,(p-1)*m,(p-i))
-      for (j in ((1+m*(i-2)):(1+m*(i-2)+m-1)))
-      {q = j - m*(i-2)
-      for (K in ((1+i):p))
-      {dPxdtdbi[[i]][j,(K-i)] = (q*sin(q*(ang[K]-ang[i])))*z2[K]*z2[i]}
-      }
+      for (i in 1:(p-1)){
+        dPxdtdbi[[i]] = matrix(0,(p-1)*m,(p-i))
+        for (j in ((1+m*(i-2)):(1+m*(i-2)+m-1))){
+          q = j - m*(i-2)
+          for (K in ((1+i):p)){
+            dPxdtdbi[[i]][j,(K-i)] = (q*sin(q*(ang[K]-ang[i])))*z2[K]*z2[i]
+          }
+        }
       }
 
       d2Pxdbdti <- do.call(cbind, dPxdtdbi)
@@ -754,10 +776,11 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       dPxdtdbj=list()
 
-      for (i in 1:(p-1))
-      {dPxdtdbj[[i]] = matrix(0,m*(p-1),(p-i))
-      for (j in 1:(p-i))
-      {dPxdtdbj[[i]][(1+m*(i-1)+m*(j-1)):(m+m*(i-1)+m*(j-1)),j] = (-c(1:m)*sin(c(1:m)*(ang[(i+j)]-ang[i])))*z2[(i+j)]*z2[i]}
+      for (i in 1:(p-1)){
+        dPxdtdbj[[i]] = matrix(0,m*(p-1),(p-i))
+        for (j in 1:(p-i)){
+          dPxdtdbj[[i]][(1+m*(i-1)+m*(j-1)):(m+m*(i-1)+m*(j-1)),j] = (-c(1:m)*sin(c(1:m)*(ang[(i+j)]-ang[i])))*z2[(i+j)]*z2[i]
+        }
       }
 
       d2Pxdbdtj <- do.call(cbind, dPxdtdbj)
@@ -769,87 +792,93 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
         } else  {
           dPxdtdbi=list()
 
-          for (i in 1:(p-1))
-          {dPxdtdbi[[i]] = matrix(0,(p-1)*m,(p-i))
-          for (j in ((1+m*(i-2)):(1+m*(i-2)+m-1)))
-          {q = j - m*(i-2)
-          for ( K in ((1+i):p))
-          {dPxdtdbi[[i]][j,(K-i)] = (q*sin(q*(ang[K]-ang[i])))*z2[K]*z2[i]}
-          dPxdtdbi[[i]][seq(2,((p-1)*m),by=2),] = 0
-          dPxdtdbi[[i]][1,] =0
-          } }
-
-          d2Pxdbdti <- do.call(cbind, dPxdtdbi)
-          d2Pxdbdti[,c(1:(p-1))] <- 0
-
-          dPxdtdbj=list()
-
-          for (i in 1:(p-1))
-          {dPxdtdbj[[i]] = matrix(0,m*(p-1),(p-i))
-          for (j in 1:(p-i))
-          {dPxdtdbj[[i]][(1+m*(i-1)+m*(j-1)):(m+m*(i-1)+m*(j-1)),j] = (-c(1:m)*sin(c(1:m)*(ang[(i+j)]-ang[i])))*z2[(i+j)]*z2[i]}
-          dPxdtdbj[[i]][seq(2,((p-1)*m),by=2),] = 0
-          dPxdtdbj[[i]][1,] =0
+          for (i in 1:(p-1)){
+            dPxdtdbi[[i]] = matrix(0,(p-1)*m,(p-i))
+            for (j in ((1+m*(i-2)):(1+m*(i-2)+m-1))){
+              q = j - m*(i-2)
+              for (K in ((1+i):p)){
+                dPxdtdbi[[i]][j,(K-i)] = (q*sin(q*(ang[K]-ang[i])))*z2[K]*z2[i]
+              }
+              dPxdtdbi[[i]][seq(2,((p-1)*m),by=2),] = 0
+              dPxdtdbi[[i]][1,] =0
+            }
           }
 
-          d2Pxdbdtj <- do.call(cbind, dPxdtdbj)
-          d2Pxdbdt = d2Pxdbdti + d2Pxdbdtj
-        }}  else {
-
-          dPxdtdbi=list()
-
-          for (i in 1:(p-1))
-          {dPxdtdbi[[i]] = matrix(0,(p-1)*m,(p-i))
-          for (j in ((1+m*(i-2)):(1+m*(i-2)+m-1)))
-          {q = j - m*(i-2)
-          for ( K in ((1+i):p))
-          {dPxdtdbi[[i]][j,(K-i)] = (q*sin(q*(ang[K]-ang[i])))*z2[K]*z2[i]}
-          dPxdtdbi[[i]][1,] =0
-          } }
-
           d2Pxdbdti <- do.call(cbind, dPxdtdbi)
           d2Pxdbdti[,c(1:(p-1))] <- 0
 
           dPxdtdbj=list()
 
-          for (i in 1:(p-1))
-          {dPxdtdbj[[i]] = matrix(0,m*(p-1),(p-i))
-          for (j in 1:(p-i))
-          {dPxdtdbj[[i]][(1+m*(i-1)+m*(j-1)):(m+m*(i-1)+m*(j-1)),j] = (-c(1:m)*sin(c(1:m)*(ang[(i+j)]-ang[i])))*z2[(i+j)]*z2[i]}
-          dPxdtdbj[[i]][1,] =0
+          for (i in 1:(p-1)){
+            dPxdtdbj[[i]] = matrix(0,m*(p-1),(p-i))
+            for (j in 1:(p-i)){
+              dPxdtdbj[[i]][(1+m*(i-1)+m*(j-1)):(m+m*(i-1)+m*(j-1)),j] = (-c(1:m)*sin(c(1:m)*(ang[(i+j)]-ang[i])))*z2[(i+j)]*z2[i]
+            }
+            dPxdtdbj[[i]][seq(2,((p-1)*m),by=2),] = 0
+            dPxdtdbj[[i]][1,] =0
           }
 
           d2Pxdbdtj <- do.call(cbind, dPxdtdbj)
           d2Pxdbdt = d2Pxdbdti + d2Pxdbdtj
         }
+      }  else {
+
+        dPxdtdbi=list()
+
+        for (i in 1:(p-1)){
+          dPxdtdbi[[i]] = matrix(0,(p-1)*m,(p-i))
+          for (j in ((1+m*(i-2)):(1+m*(i-2)+m-1))){
+            q = j - m*(i-2)
+            for ( K in ((1+i):p)){
+              dPxdtdbi[[i]][j,(K-i)] = (q*sin(q*(ang[K]-ang[i])))*z2[K]*z2[i]
+            }
+            dPxdtdbi[[i]][1,] =0
+          }
+        }
+
+        d2Pxdbdti <- do.call(cbind, dPxdtdbi)
+        d2Pxdbdti[,c(1:(p-1))] <- 0
+
+        dPxdtdbj=list()
+
+        for (i in 1:(p-1)){
+          dPxdtdbj[[i]] = matrix(0,m*(p-1),(p-i))
+          for (j in 1:(p-i)){
+            dPxdtdbj[[i]][(1+m*(i-1)+m*(j-1)):(m+m*(i-1)+m*(j-1)),j] = (-c(1:m)*sin(c(1:m)*(ang[(i+j)]-ang[i])))*z2[(i+j)]*z2[i]
+          }
+          dPxdtdbj[[i]][1,] =0
+        }
+
+        d2Pxdbdtj <- do.call(cbind, dPxdtdbj)
+        d2Pxdbdt = d2Pxdbdti + d2Pxdbdtj
+      }
 
       # dtdn
 
       angi <- function(ang,i,j,m){
         x = rep(0, m)
 
-        for (K in 1:m)
-        {x[K] = K*b[K+1]*sin(K*(ang[j]-ang[i]))}
+        for (K in 1:m) {x[K] = K*b[K+1]*sin(K*(ang[j]-ang[i]))}
 
-        sum(x)}
+        sum(x)
+      }
 
-      angj <- function(ang,i,j,m)
-      {x = rep(0, m)
+      angj <- function(ang,i,j,m){
+        x = rep(0, m)
 
-      for (K in 1:m)
-      {x[K] = -K*b[K+1]*sin(K*(ang[j]-ang[i]))}
+        for (K in 1:m) {x[K] = -K*b[K+1]*sin(K*(ang[j]-ang[i]))}
 
-      sum(x)}
+        sum(x)
+      }
 
       dPxdthe <- list()
 
       for (ii in 1:(p-1)){dPxdthe[[ii]] <- matrix(0, (p-ii), (p))}
 
-      for (ii in 1:(p-1))
-      {
-        for (l in 1:(p-ii))
-        { dPxdthe[[ii]][l,ii] <- angi(ang,ii,(ii+l),m)
-        dPxdthe[[ii]][l,(ii+l)] <- angj(ang,ii,(ii+l),m)
+      for (ii in 1:(p-1)){
+        for (l in 1:(p-ii)){
+          dPxdthe[[ii]][l,ii] <- angi(ang,ii,(ii+l),m)
+          dPxdthe[[ii]][l,(ii+l)] <- angj(ang,ii,(ii+l),m)
         }
       }
 
@@ -857,10 +886,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       tt = list()
 
-      for (i in 1:p)
-      {
+      for (i in 1:p){
         tt[[i]] = matrix(0,p,p)
-
         tt[[i]][lower.tri(tt[[i]])] <- dPxdthe[,i]
         tt[[i]] = tt[[i]] + t(tt[[i]])
       }
@@ -891,10 +918,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
         beta = list()
         for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
 
-        for (ii in 1:(p-1))
-        {
-          for (l in 1:(p-ii))
-          {
+        for (ii in 1:(p-1)){
+          for (l in 1:(p-ii)){
             bt <- rep(0, m)
             for (mm in 1:(m)) {bt[mm] <- (cos(mm*(ang[ii+l]-ang[ii]))-1)}
             beta[[ii]][l,] <- bt
@@ -907,10 +932,8 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
         beta = list()
         for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
 
-        for (ii in 1:(p-1))
-        {
-          for (l in 1:(p-ii))
-          {
+        for (ii in 1:(p-1)){
+          for (l in 1:(p-ii)){
             bt <- rep(0, m)
             for (mm in 1:(m)) {bt[mm] <- (cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii]))}
             beta[[ii]][l,] <- bt
@@ -919,21 +942,22 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
         dPxdb <- do.call(rbind, beta)
 
-        if (m <= 2) {dPxdb[,1:m] <- 0} else {dPxdb <- do.call(rbind, beta)
-        dPxdb[,seq(2,m,by=2)] = 0; dPxdb[,1] = 0
+        if (m <= 2) {
+          dPxdb[,1:m] <- 0
+        } else {
+          dPxdb <- do.call(rbind, beta)
+          dPxdb[,seq(2,m,by=2)] = 0; dPxdb[,1] = 0
         }
       } else {
 
         beta = list()
         for (ii in 1:(p-1)){beta[[ii]] <- matrix(0, (p-ii), m)}
 
-        for (ii in 1:(p-1))
-        {
-          for (l in 1:(p-ii))
-          {
+        for (ii in 1:(p-1)){
+          for (l in 1:(p-ii)){
             bt <- rep(0, m)
             if (m==1) {for (mm in seq(1,m,by=2)) {bt[mm] <- (cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii]))}
-            }else {
+            } else {
               for (mm in seq(1,m,by=2)) {bt[mm] <- (cos(mm*(ang[ii+l]-ang[ii]))-cos(ang[ii+l]-ang[ii]))}
               for (mm in seq(2,m,by=2)) {bt[mm] <- (cos(mm*(ang[ii+l]-ang[ii]))-1)}}
             beta[[ii]][l,] <- bt}
@@ -944,8 +968,7 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
 
       bb = list()
 
-      for (i in 1:m)
-      {
+      for (i in 1:m){
         bb[[i]] = matrix(0,p,p)
 
         bb[[i]][lower.tri(bb[[i]])] <- dPxdb[,i]
@@ -992,19 +1015,19 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
           JJ2 <- matrix(0,p,p)
           diag(JJ2)[q] <- 1
 
-          if(q == l)
-          {dKdv = matrix(0,p,p)
-          diag(dKdv)[l] <- (3/4)*(1+v[l])^(-5/2)
-          d2Pxdvdvl = dKdv%*%(Pc+Dv)%*%Dz2 + KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2 +
-            t(dKdv%*%(Pc+Dv)%*%Dz2 + KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2)
+          if(q == l){
+            dKdv = matrix(0,p,p)
+            diag(dKdv)[l] <- (3/4)*(1+v[l])^(-5/2)
+            d2Pxdvdvl = dKdv%*%(Pc+Dv)%*%Dz2 + KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2 +
+              t(dKdv%*%(Pc+Dv)%*%Dz2 + KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2)
 
-          d2Pxdvdv[[l]][(q-l+1),] <-  as.vector(d2Pxdvdvl[lower.tri(d2Pxdvdvl)])} ##change into lower.triangle
+            d2Pxdvdv[[l]][(q-l+1),] <-  as.vector(d2Pxdvdvl[lower.tri(d2Pxdvdvl)])
+          } else {
+            d2Pxdvdvl = KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2 +
+              t(KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2)
 
-          else
-          {d2Pxdvdvl = KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2 +
-            t(KK1%*%JJ2%*%Dz2 + KK1%*%(Pc+Dv)%*%KK2 + KK2%*%JJ1%*%Dz2)
-
-          d2Pxdvdv[[l]][(q-l+1),] <-  as.vector(d2Pxdvdvl[lower.tri(d2Pxdvdvl)])}
+            d2Pxdvdv[[l]][(q-l+1),] <-  as.vector(d2Pxdvdvl[lower.tri(d2Pxdvdvl)])
+          }
         }
       }
 
@@ -1157,7 +1180,9 @@ CircumO <- function(object, m=1, mcsc="unconstrained", type="N",
   # alpha to beta
   if (m==1){
     estim[(p-1+1):(p-1+m)] <- 1 - estim[(p-1+1):(p-1+m)]/(1+sum(estim[(p-1+1):(p-1+m)]))
-  } else estim[(p-1+1):(p-1+m)] <- c(1, estim[(p-1+2):(p-1+m)])/(1+sum(estim[(p-1+1):(p-1+m)]))
+  } else {
+    estim[(p-1+1):(p-1+m)] <- c(1, estim[(p-1+2):(p-1+m)])/(1+sum(estim[(p-1+1):(p-1+m)]))
+  }
 
   op = which(estim[1:(p-1)]>2*pi)
   estim[op] = estim[op] - 2*pi
