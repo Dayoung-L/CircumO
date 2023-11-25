@@ -39,7 +39,7 @@ CircumPlot <-
 
   \item{reverse}{ logical. If \code{TRUE}, plot the figure using the 360-angular positions (just reversing the circular order).}
 }
-}
+
 \details{
 CirucmPlot
 
