@@ -1,3 +1,3 @@
 # CircumO
 
-The function is to compute ordinary least square estimates of circumplex model parameters and their standard errors. It allows normal, ordinal, and time series variables.
+The function is for computing ordinary least square estimates of circumplex model parameters and their standard errors. It accommodates normal, ordinal, and time series variables.
